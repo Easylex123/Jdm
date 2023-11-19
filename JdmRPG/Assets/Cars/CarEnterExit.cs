@@ -23,13 +23,17 @@ public class CarEnterExit : MonoBehaviour
     void Start()
     {
         driveUi.gameObject.SetActive(false);
-        _carController = GetComponent<CarController>();
         _carController.enabled = false;
     }
-    
+
+    private void Awake()
+    {
+        _carController = GetComponent<CarController>();
+    }
+
     void Update()
     {
-        if (_canDrive)
+        if (_canDrive && !_driving)
         {
             driveUi.gameObject.SetActive(true);
         }
@@ -46,9 +50,17 @@ public class CarEnterExit : MonoBehaviour
             _driving = true;
             
             player.transform.SetParent(car);
-            //player.gameObject.SetActive(false); PROBLEM
+            player.gameObject.SetActive(false);
 
-            cinemachineFreeLookCameraCar.enabled = true;
+            if (cinemachineFreeLookCameraCar.gameObject.CompareTag("Rx7Cam") && _driving)
+            {
+                cinemachineFreeLookCameraCar.enabled = true;
+            }
+            else if (cinemachineFreeLookCameraCar.gameObject.CompareTag("CarCamera")&& _driving)
+            {
+                cinemachineFreeLookCameraCar.enabled = true;
+            }
+            
             cinemachineFreeLookCameraPlayer.enabled = false;
         }
 
@@ -66,7 +78,7 @@ public class CarEnterExit : MonoBehaviour
 
     private void OnTriggerStay(Collider collider)
     {
-        if (collider.gameObject.CompareTag("Player"))
+        if (collider.gameObject.CompareTag("Player" ))
         {
             driveUi.gameObject.SetActive(true);
             _canDrive = true;
